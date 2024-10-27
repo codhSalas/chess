@@ -19,3 +19,6 @@ void Piece::mouve (int x, int y){
   this->x = x;
   this->y = y;
 }
+bool Piece::promotion() const{
+  return false;
+}

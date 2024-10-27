@@ -37,3 +37,9 @@ void Pion::print()const{
   std::cout <<back<<c<<"\u265F "<<"\e[0m";
 
 }
+bool Pion::promotion() const{
+  if (getx() == 7 || getx() ==0){
+    return true;
+  }
+  return false;
+}

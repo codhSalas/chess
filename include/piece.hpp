@@ -12,6 +12,7 @@ public:
   virtual ~Piece() {}
   virtual bool is_valide(int nx ,int ny , const Echiquier & x)const ;
   virtual void print() const ;
+  virtual bool promotion() const;
   void mouve (int x, int y);
   int getColor() const;
   int getx() const;

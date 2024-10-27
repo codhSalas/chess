@@ -96,27 +96,39 @@ bool Echiquier::mouve(int a , int b , int x ,int y){
       
       temp = nullptr;
       std::cout << "coup joué" << std::endl;
-      return true;
+      for (int i = 0; i < 8; i++){
+        for (int j = 0; j < 8; j++){
+          if (plateau[i][j]->promotion()){
+            
+            char c= ' ';
+            int curcol =plateau[i][j]->getColor();
 
-  }else{
-    std::cout << "coup interdis "<<std::endl;
-    return false;
+            while (c != 'd' && c != 'c' && c !='f' && c!='t' ){
+            std::cout <<"promotion du pion "<<i<<" "<<j <<"choisie la priece de promotion \n pour dame:d , cavalier:c, fou:f ,tour:c  :";
+            
+            if (plateau[i][j] != nullptr) delete plateau[i][j];
+              std::cin>>c;
+              c =(c-'a'<0)? (c-'A'+'a'):c;
+              if (c == 'd'){
+                plateau[i][j]= new Reine(i,j,curcol);
+              }if (c == 'c'){
+                plateau[i][j]= new Cavalier(i,j,curcol);
+              }if (c == 'f'){
+                plateau[i][j]= new Fou(i,j,curcol);
+              }if (c == 't'){
+                plateau[i][j]= new Tour(i,j,curcol);
+              } 
+            }
+          }
+        }
+      }
+    return true;
   }
-  return true;
+  std::cout << "coup interdis "<<std::endl;
+  return false;
+
 }
-Echiquier::Echiquier(int i ){
-  for (i = 0; i < 8; i++){
-    for (int j = 0; j < 8; j++){
-      plateau[i][j] = new Vide(i,j);    
-    }
-  }
-  plateau[0][0] = new Roi(0,0,31);
-  RoiBlanc =plateau[0][0];
-  plateau[1][0] = new Reine(1,0,31);
-  plateau[4][5] = new Reine(4,5,31);
-  plateau[5][0] = new Roi(5,0,91);
-  RoiNoir =plateau[5][0];
-}
+
 
 
 bool Echiquier::is_check (int col){
@@ -155,47 +167,47 @@ bool Echiquier::is_checkMate(int col) {
 
     for (int dx = -1; dx <= 1; dx++) {
         for (int dy = -1; dy <= 1; dy++) {
-            int newX = x + dx;
-            int newY = y + dy;
+          int newX = x + dx;
+          int newY = y + dy;
 
-            // Vérifiez les limites du plateau
-            if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
-                if (plateau[x][y] != nullptr && plateau[x][y]->is_valide(newX, newY, *this)) {
-                    Piece* temp = plateau[newX][newY];
-                    plateau[newX][newY] = plateau[x][y];
-                    plateau[newX][newY]->mouve(newX, newY);
-                    plateau[x][y] = new Vide(x, y);
+          // Vérifiez les limites du plateau
+          if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8) {
+              if (plateau[x][y] != nullptr && plateau[x][y]->is_valide(newX, newY, *this)) {
+                  Piece* temp = plateau[newX][newY];
+                  plateau[newX][newY] = plateau[x][y];
+                  plateau[newX][newY]->mouve(newX, newY);
+                  plateau[x][y] = new Vide(x, y);
 
-                    bool theCheck = is_check(col);
-                    plateau[x][y] = plateau[newX][newY];
-                    plateau[x][y]->mouve(x, y);
-                    plateau[newX][newY] = temp;
+                  bool theCheck = is_check(col);
+                  plateau[x][y] = plateau[newX][newY];
+                  plateau[x][y]->mouve(x, y);
+                  plateau[newX][newY] = temp;
 
-                    temp = nullptr;
+                  temp = nullptr;
 
-                    if (!theCheck) return false;
-                }
-            }
+                  if (!theCheck) return false;
+              }
+          }
 
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    if (plateau[i][j] != nullptr && plateau[i][j]->getColor() == col) {
-                        if (plateau[i][j]->is_valide(newX, newY, *this)) {
-                            Piece* temp = plateau[newX][newY];
-                            plateau[newX][newY] = plateau[i][j];
-                            plateau[newX][newY]->mouve(newX, newY);
-                            plateau[i][j] = new Vide(i, j);
+          for (int i = 0; i < 8; i++) {
+              for (int j = 0; j < 8; j++) {
+                  if (plateau[i][j] != nullptr && plateau[i][j]->getColor() == col) {
+                      if (plateau[i][j]->is_valide(newX, newY, *this)) {
+                          Piece* temp = plateau[newX][newY];
+                          plateau[newX][newY] = plateau[i][j];
+                          plateau[newX][newY]->mouve(newX, newY);
+                          plateau[i][j] = new Vide(i, j);
 
-                            bool theCheck = is_check(col);
-                            plateau[i][j] = plateau[newX][newY];
-                            plateau[i][j]->mouve(i, j);
-                            plateau[newX][newY] = temp;
-                            temp = nullptr;
-                            if (!theCheck) return false;
-                        }
-                    }
-                }
-            }
+                          bool theCheck = is_check(col);
+                          plateau[i][j] = plateau[newX][newY];
+                          plateau[i][j]->mouve(i, j);
+                          plateau[newX][newY] = temp;
+                          temp = nullptr;
+                          if (!theCheck) return false;
+                      }
+                  }
+              }
+          }
         }
     }
     if (col==31){
@@ -205,4 +217,18 @@ bool Echiquier::is_checkMate(int col) {
     }
     
     return true;
+}
+
+Echiquier::Echiquier(int debug ){
+  for (int i = 0; i < 8; i++){
+    for (int j = 0; j < 8; j++){
+      plateau[i][j] = new Vide(i,j);    
+    }
+  }
+  plateau[0][0] = new Roi(0,0,31);
+  RoiBlanc =plateau[0][0];
+  plateau[6][6] = new Pion(6,6,31);
+  
+  plateau[5][0] = new Roi(5,0,91);
+  RoiNoir =plateau[5][0];
 }
